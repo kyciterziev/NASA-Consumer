@@ -1,0 +1,43 @@
+@model PicsOfTheDayViewModel
+
+<form id="myForm" method="get" enctype="multipart/form-data" asp-controller="Nasa" asp-action="PicOfTheDay">
+    <div asp-validation-summary="All" style="color:red;"></div>
+    <p style="font-weight: bold;">Search Picture of the day by Date:</p>
+    <span>
+        @Html.EditorFor(o => o.StartDate, new { id="startDate", placeholder="Start Date" })
+    </span>
+    <span>
+        @Html.EditorFor(o => o.EndDate, new { id="endDate", placeholder="End Date" })
+    </span>
+    <input type="submit" value="Search" />
+    <hr />
+</form>
+@if (Model != null)
+{
+    @foreach (var pic in @Model.PicsOfTheDayViewModels)
+    {
+        <div class="asteroid__card">
+            <img class="asteroid__img" src="@pic.Url" alt="@pic.Title" />
+            <div class="asteroid__info">
+                <h2 class="title">
+                    @pic.Title
+                </h2>
+                <div class="paragraph">
+                    Author: @pic.Copyright
+                </div>
+                <div class="paragraph">
+                    @pic.Date.ToString("yyyy-MM-dd")
+                </div>
+                <div class="paragraph">
+                    @pic.Explanation
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div>
+        No Results Found!
+    </div>
+}

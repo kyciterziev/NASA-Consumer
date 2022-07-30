@@ -1,0 +1,64 @@
+﻿@model AsteroidsViewModel
+
+<div>
+    <form id="myForm" method="get" enctype="multipart/form-data" asp-controller="Nasa" asp-action="GetAsteroids">
+        <div asp-validation-summary="All" style="color:red;"></div>
+        <p style="font-weight: bold;">Search Asteroids by Date:</p>
+        <div>
+            <span>
+                @Html.EditorFor(o => o.StartDate, new { id="startDate", placeholder="Start Date" })
+            </span>
+            <span>
+                @Html.EditorFor(o => o.EndDate, new { id="endDate", placeholder="End Date" })
+            </span>
+            <input type="submit" value="Search" />
+        </div>
+    </form>
+    <hr />
+</div>
+@if (Model != null)
+{
+    <div>
+        <a href="@Url.Action("DownloadExcel","Nasa", new { StartDate = Model.StartDate, EndDate = Model.EndDate })">Export
+            To
+            Excel</a>
+    </div>
+}
+<section class="pb-5">
+    <div class="container text-center">
+        <div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Asteroid Name</th>
+                        <th>Estimated Diameter</th>
+                        <th>Dangerous To Earth?</th>
+                        <th>Close Aproach Date</th>
+                        <th>Miss Distance</th>
+                        <th>Orbiting Body</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        var nearByObjects = Model.Asteroids.NearEarthObjects.OrderBy(x => x.Key);
+                        @foreach (var kvp in nearByObjects)
+                        {
+                            @foreach (var asteroid in kvp.Value)
+                            {
+                                <tr>
+                                    <th>@asteroid.Name</th>
+                                    <th>@asteroid.EstimatedDiameter.Kilometers.EstimatedDiameterMax</th>
+                                    <th>@(asteroid.IsPotentiallyHazardousAsteroid ? "Yes" : "No")</th>
+                                    <th>@asteroid.CloseApproachData.FirstOrDefault()?.CloseApproachDateFull</th>
+                                    <th>@asteroid.CloseApproachData.FirstOrDefault()?.MissDistance.Kilometers</th>
+                                    <th>@asteroid.CloseApproachData.FirstOrDefault()?.OrbitingBody</th>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
